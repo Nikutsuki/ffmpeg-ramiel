@@ -92,7 +92,7 @@ const build_script =
     \\DAVB="$BUILD/dav1d-build"
     \\if command -v cygpath >/dev/null 2>&1; then DAVB_N="$(cygpath -m "$DAVB")"; else DAVB_N="$DAVB"; fi
     \\echo "ffmpeg-ramiel: building dav1d (meson)" >>"$LOG"
-    \\if ! meson setup "$DAVB_N" "$DAVSRC_N" --prefix="$OUT_N" --buildtype=release --default-library=static -Denable_tools=false -Denable_tests=false </dev/null >>"$LOG" 2>&1; then
+    \\if ! meson setup "$DAVB_N" "$DAVSRC_N" --prefix="$OUT_N" --libdir=lib --buildtype=release --default-library=static -Denable_tools=false -Denable_tests=false </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== dav1d meson setup failed ===" >&2; tail -n 100 "$LOG" >&2; exit 1
     \\fi
     \\if ! ninja -C "$DAVB_N" install </dev/null >>"$LOG" 2>&1; then
