@@ -1,0 +1,36 @@
+ffmpeg-ramiel
+=============
+
+This repository's own build scripts (build.zig, build.zig.zon, CI workflow)
+are licensed under the MIT License (see LICENSE).
+
+The software this package BUILDS and DISTRIBUTES as precompiled static archives
+is NOT MIT-licensed. It is governed by the licenses below.
+
+FFmpeg — LGPL v2.1 or later
+--------------------------
+This package configures FFmpeg (pinned to release n7.1.1) with decoders,
+demuxers, parsers and bitstream filters only, and WITHOUT --enable-gpl, so the
+result is LGPL, not GPL. The static libraries (libavcodec, libavformat,
+libavutil, libswresample) and any binary that statically links them are subject
+to the LGPL, including the section 6 relinking obligation: a distributor of such
+a binary must enable recipients to relink it against a modified FFmpeg. The means
+to do so are provided by this repository: the exact FFmpeg version and the full
+configure flag set are in build.zig, and the object archives are the release
+tarballs. FFmpeg licensing: https://www.ffmpeg.org/legal.html
+
+dav1d — BSD 2-Clause
+--------------------
+AV1 decoding uses libdav1d (VideoLAN), pinned to 1.5.1, statically linked.
+FFmpeg's built-in av1 decoder is hardware-only; libdav1d provides software AV1.
+License: https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
+
+Patents
+-------
+The H.264, H.265/HEVC and AAC decoders implement patent-encumbered formats.
+Distributing or using them may require patent licenses in some jurisdictions
+(for example via MPEG LA, Via LA or Access Advance pools), as with any FFmpeg
+distribution. This is the distributor's and end user's responsibility. No patent
+license is granted by this repository.
+
+No GPL components are enabled.

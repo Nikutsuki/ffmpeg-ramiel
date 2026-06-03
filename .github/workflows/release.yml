@@ -1,0 +1,95 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MSYS2 UCRT64 toolchain
+        shell: pwsh
+        run: |
+          $pacman = "C:\msys64\usr\bin\pacman.exe"
+          & $pacman -Sy --noconfirm --disable-download-timeout
+          & $pacman -S --needed --noconfirm --disable-download-timeout `
+            make `
+            mingw-w64-ucrt-x86_64-gcc `
+            mingw-w64-ucrt-x86_64-nasm `
+            mingw-w64-ucrt-x86_64-meson `
+            mingw-w64-ucrt-x86_64-ninja `
+            mingw-w64-ucrt-x86_64-pkgconf
+
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.16.0
+
+      - name: Build static FFmpeg + dav1d
+        shell: pwsh
+        run: zig build -Dprebuilt=false
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item NOTICE zig-out/ffmpeg/NOTICE
+          tar -czf "ffmpeg-ramiel-$env:GITHUB_REF_NAME-x86_64-windows.tar.gz" -C zig-out/ffmpeg .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: "*.tar.gz"
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential nasm meson ninja-build pkg-config
+
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.16.0
+
+      - name: Build static FFmpeg + dav1d
+        run: zig build -Dprebuilt=false
+
+      - name: Package
+        run: |
+          cp NOTICE zig-out/ffmpeg/NOTICE
+          tar -czf "ffmpeg-ramiel-${GITHUB_REF_NAME}-x86_64-linux.tar.gz" -C zig-out/ffmpeg .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: "*.tar.gz"
+
+  release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Print zig package hashes
+        run: |
+          for f in dist/*.tar.gz; do
+            echo "=== $f ==="
+            sha256sum "$f"
+          done
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.tar.gz
+          fail_on_unmatched_files: true

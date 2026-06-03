@@ -1,0 +1,37 @@
+.{
+    .name = .ffmpeg_ramiel,
+    .version = "0.1.0",
+    .fingerprint = 0x223fbf8eb4e37d1f,
+    .minimum_zig_version = "0.16.0",
+
+    .dependencies = .{
+        .ffmpeg_src = .{
+            .url = "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n7.1.1.tar.gz",
+            .hash = "N-V-__8AAJgs8wSNfTZRN5DFn26G3VzqVU9lVQns-TM6J6wz",
+            .lazy = true,
+        },
+        .dav1d_src = .{
+            .url = "https://github.com/videolan/dav1d/archive/refs/tags/1.5.1.tar.gz",
+            .hash = "N-V-__8AADyfswC8PUcbSINU_Y8cAc2lKgEqVi6du23wXLMS",
+            .lazy = true,
+        },
+        .prebuilt_x86_64_windows = .{
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.0/ffmpeg-ramiel-v0.1.0-x86_64-windows.tar.gz",
+            .hash = "N-V-__8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            .lazy = true,
+        },
+        .prebuilt_x86_64_linux = .{
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.0/ffmpeg-ramiel-v0.1.0-x86_64-linux.tar.gz",
+            .hash = "N-V-__8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            .lazy = true,
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "README.md",
+        "LICENSE",
+        "NOTICE",
+    },
+}
