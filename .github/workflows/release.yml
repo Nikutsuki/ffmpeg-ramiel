@@ -25,9 +25,12 @@ jobs:
             mingw-w64-ucrt-x86_64-ninja `
             mingw-w64-ucrt-x86_64-pkgconf
 
-      - uses: mlugg/setup-zig@v1
-        with:
-          version: 0.16.0
+      - name: Install Zig 0.16.0
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://ziglang.org/download/0.16.0/zig-x86_64-windows-0.16.0.zip -OutFile zig.zip
+          Expand-Archive -Path zig.zip -DestinationPath C:\zig -Force
+          "C:\zig\zig-x86_64-windows-0.16.0" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
       - name: Build static FFmpeg + dav1d
         shell: pwsh
@@ -52,11 +55,14 @@ jobs:
       - name: Install toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential nasm meson ninja-build pkg-config
+          sudo apt-get install -y build-essential nasm meson ninja-build pkg-config curl
 
-      - uses: mlugg/setup-zig@v1
-        with:
-          version: 0.16.0
+      - name: Install Zig 0.16.0
+        run: |
+          curl -fsSL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz -o zig.tar.xz
+          mkdir -p "$HOME/zig"
+          tar -xf zig.tar.xz -C "$HOME/zig" --strip-components=1
+          echo "$HOME/zig" >> "$GITHUB_PATH"
 
       - name: Build static FFmpeg + dav1d
         run: zig build -Dprebuilt=false
