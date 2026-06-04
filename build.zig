@@ -118,7 +118,7 @@ const build_script =
     \\  --enable-bsf=h264_mp4toannexb,hevc_mp4toannexb \
     \\  --enable-protocol=file \
     \\  --disable-network --disable-iconv --disable-zlib --disable-bzlib --disable-lzma \
-    \\  --extra-cflags="-ffunction-sections -fdata-sections" \
+    \\  --extra-cflags="-ffunction-sections" \
     \\  </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== ffmpeg configure failed ===" >&2; tail -n 80 "$LOG" >&2
     \\  echo "=== ffbuild/config.log tail ===" >&2; tail -n 60 ffbuild/config.log >&2 2>/dev/null
