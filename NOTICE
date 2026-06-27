@@ -17,13 +17,15 @@ to the LGPL, including the section 6 relinking obligation: a distributor of such
 a binary must enable recipients to relink it against a modified FFmpeg. The means
 to do so are provided by this repository: the exact FFmpeg version and the full
 configure flag set are in build.zig, and the object archives are the release
-tarballs. FFmpeg licensing: https://www.ffmpeg.org/legal.html
+tarballs. The full LGPL v2.1 text is bundled with the release tarball as
+COPYING.LGPLv2.1. FFmpeg licensing: https://www.ffmpeg.org/legal.html
 
 dav1d — BSD 2-Clause
 --------------------
 AV1 decoding uses libdav1d (VideoLAN), pinned to 1.5.1, statically linked.
 FFmpeg's built-in av1 decoder is hardware-only; libdav1d provides software AV1.
-License: https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
+License (BSD 2-Clause): bundled with the release tarball as COPYING.dav1d;
+upstream at https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
 
 Patents
 -------

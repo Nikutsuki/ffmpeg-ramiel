@@ -40,6 +40,8 @@ jobs:
         shell: pwsh
         run: |
           Copy-Item NOTICE zig-out/ffmpeg/NOTICE
+          Copy-Item COPYING.LGPLv2.1 zig-out/ffmpeg/COPYING.LGPLv2.1
+          Copy-Item COPYING.dav1d zig-out/ffmpeg/COPYING.dav1d
           tar -czf "ffmpeg-ramiel-$env:GITHUB_REF_NAME-x86_64-windows.tar.gz" -C zig-out/ffmpeg .
 
       - uses: actions/upload-artifact@v4
@@ -70,6 +72,8 @@ jobs:
       - name: Package
         run: |
           cp NOTICE zig-out/ffmpeg/NOTICE
+          cp COPYING.LGPLv2.1 zig-out/ffmpeg/COPYING.LGPLv2.1
+          cp COPYING.dav1d zig-out/ffmpeg/COPYING.dav1d
           tar -czf "ffmpeg-ramiel-${GITHUB_REF_NAME}-x86_64-linux.tar.gz" -C zig-out/ffmpeg .
 
       - uses: actions/upload-artifact@v4
