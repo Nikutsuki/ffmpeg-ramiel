@@ -20,9 +20,7 @@ pub fn build(b: *std.Build) void {
     } else null;
 
     if (prebuilt_name) |name| {
-        if (b.lazyDependency(name, .{})) |dep| {
-            exposePrefix(b, dep.path(""));
-        }
+        exposePrefix(b, b.dependency(name, .{}).path(""));
         return;
     }
 
