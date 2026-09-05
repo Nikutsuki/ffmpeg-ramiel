@@ -1,6 +1,6 @@
 .{
     .name = .ffmpeg_ramiel,
-    .version = "0.1.1",
+    .version = "0.1.2",
     .fingerprint = 0x223fbf8eb4e37d1f,
     .minimum_zig_version = "0.16.0",
 

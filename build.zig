@@ -82,9 +82,11 @@ const build_script =
     \\  OUT="$(cygpath -u "$OUT")"
     \\  DAVSRC_N="$(cygpath -m "$DAVSRC")"
     \\  OUT_N="$(cygpath -m "$OUT")"
+    \\  HWFLAGS="--enable-d3d11va --enable-dxva2"
     \\else
     \\  DAVSRC_N="$DAVSRC"
     \\  OUT_N="$OUT"
+    \\  HWFLAGS="--enable-vaapi"
     \\fi
     \\BUILD="${OUT}.build"
     \\rm -rf "$BUILD"; mkdir -p "$BUILD"
@@ -98,7 +100,7 @@ const build_script =
     \\if ! ninja -C "$DAVB_N" install </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== dav1d build failed ===" >&2; tail -n 120 "$LOG" >&2; exit 1
     \\fi
-    \\export PKG_CONFIG_PATH="$OUT_N/lib/pkgconfig"
+    \\export PKG_CONFIG_PATH="$OUT/lib/pkgconfig"
     \\FFB="$BUILD/ffmpeg"
     \\mkdir -p "$FFB"; cp -a "$FFSRC"/. "$FFB"/
     \\cd "$FFB"
@@ -111,6 +113,8 @@ const build_script =
     \\  --disable-everything \
     \\  --disable-avdevice --disable-avfilter --disable-swscale --disable-postproc \
     \\  --enable-avcodec --enable-avformat --enable-avutil --enable-swresample \
+    \\  $HWFLAGS \
+    \\  --enable-hwaccels \
     \\  --enable-libdav1d \
     \\  --enable-decoder=h264,hevc,vp9,libdav1d,aac,mp3,opus,vorbis,flac,pcm_s16le,pcm_s16be,pcm_f32le \
     \\  --enable-parser=h264,hevc,vp9,av1,aac,opus,vorbis,flac \
