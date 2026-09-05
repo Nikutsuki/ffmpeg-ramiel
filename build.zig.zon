@@ -18,12 +18,10 @@
         .prebuilt_x86_64_windows = .{
             .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.2/ffmpeg-ramiel-v0.1.2-x86_64-windows.tar.gz",
             .hash = "N-V-__8AAB8FGAEznikOBWsHqeHbZL8ZYP6VrGj_42nw8_VL",
-            .lazy = true,
         },
         .prebuilt_x86_64_linux = .{
             .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.2/ffmpeg-ramiel-v0.1.2-x86_64-linux.tar.gz",
             .hash = "N-V-__8AANZpDQHy0HQRUMgONM76k7rRcivSVpYuFS55PoKm",
-            .lazy = true,
         },
     },
 
