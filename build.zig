@@ -84,7 +84,7 @@ const build_script =
     \\else
     \\  DAVSRC_N="$DAVSRC"
     \\  OUT_N="$OUT"
-    \\  HWFLAGS="--enable-vaapi"
+    \\  HWFLAGS="--enable-vaapi --enable-libdrm"
     \\fi
     \\BUILD="${OUT}.build"
     \\rm -rf "$BUILD"; mkdir -p "$BUILD"
