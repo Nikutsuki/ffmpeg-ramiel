@@ -58,12 +58,17 @@ fn buildFromSource(b: *std.Build, target: std.Build.ResolvedTarget) void {
 
     const ffmpeg_src = b.lazyDependency("ffmpeg_src", .{}) orelse return;
     const dav1d_src = b.lazyDependency("dav1d_src", .{}) orelse return;
+    // FFmpeg needs Vulkan headers >= 1.3.277 to enable Vulkan video decode. They are
+    // pinned here rather than taken from the distro so the build does not depend on
+    // how current a runner image happens to be (Ubuntu 24.04 still ships 1.3.275).
+    const vulkan_headers = b.lazyDependency("vulkan_headers", .{}) orelse return;
 
     const run = b.addSystemCommand(&.{ shell, "-c", build_script, "bash" });
     run.setName("ffmpeg+dav1d: lean static build");
     run.setEnvironmentVariable("FFMPEG_TOOLCHAIN_BIN", toolchain_bin);
     run.addDirectoryArg(ffmpeg_src.path(""));
     run.addDirectoryArg(dav1d_src.path(""));
+    run.addDirectoryArg(vulkan_headers.path("include"));
     const prefix = run.addOutputDirectoryArg("ffmpeg");
 
     exposePrefix(b, prefix);
@@ -73,18 +78,21 @@ const build_script =
     \\set -e
     \\[ -n "$FFMPEG_TOOLCHAIN_BIN" ] && export PATH="$FFMPEG_TOOLCHAIN_BIN:$PATH"
     \\[ -n "$FFMPEG_TOOLCHAIN_BIN" ] && export MSYSTEM=UCRT64
-    \\FFSRC="$1"; DAVSRC="$2"; OUT="$3"
+    \\FFSRC="$1"; DAVSRC="$2"; VKINC="$3"; OUT="$4"
     \\if command -v cygpath >/dev/null 2>&1; then
     \\  FFSRC="$(cygpath -u "$FFSRC")"
     \\  DAVSRC="$(cygpath -u "$DAVSRC")"
+    \\  VKINC="$(cygpath -u "$VKINC")"
     \\  OUT="$(cygpath -u "$OUT")"
     \\  DAVSRC_N="$(cygpath -m "$DAVSRC")"
     \\  OUT_N="$(cygpath -m "$OUT")"
-    \\  HWFLAGS="--enable-d3d11va --enable-dxva2"
+    \\  VKINC_N="$(cygpath -m "$VKINC")"
+    \\  HWFLAGS="--enable-d3d11va --enable-dxva2 --enable-vulkan"
     \\else
     \\  DAVSRC_N="$DAVSRC"
     \\  OUT_N="$OUT"
-    \\  HWFLAGS="--enable-vaapi --enable-libdrm"
+    \\  VKINC_N="$VKINC"
+    \\  HWFLAGS="--enable-vaapi --enable-libdrm --enable-vulkan"
     \\fi
     \\BUILD="${OUT}.build"
     \\rm -rf "$BUILD"; mkdir -p "$BUILD"
@@ -120,16 +128,29 @@ const build_script =
     \\  --enable-bsf=h264_mp4toannexb,hevc_mp4toannexb \
     \\  --enable-protocol=file \
     \\  --disable-network --disable-iconv --disable-zlib --disable-bzlib --disable-lzma \
-    \\  --extra-cflags="-ffunction-sections" \
+    \\  --extra-cflags="-ffunction-sections -I$VKINC_N" \
     \\  </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== ffmpeg configure failed ===" >&2; tail -n 80 "$LOG" >&2
     \\  echo "=== ffbuild/config.log tail ===" >&2; tail -n 60 ffbuild/config.log >&2 2>/dev/null
     \\  exit 1
     \\fi
+    \\# configure only *checks* for Vulkan: too-old headers silently disable it and
+    \\# still produce a green build. Assert the components we depend on are present.
+    \\for sym in CONFIG_VULKAN CONFIG_H264_VULKAN_HWACCEL CONFIG_HEVC_VULKAN_HWACCEL; do
+    \\  if ! grep -q "^#define $sym 1$" config.h; then
+    \\    echo "=== $sym is not enabled: vulkan video decode is missing ===" >&2
+    \\    grep -i -n vulkan ffbuild/config.log | tail -n 40 >&2 2>/dev/null
+    \\    exit 1
+    \\  fi
+    \\done
     \\echo "ffmpeg-ramiel: compiling ffmpeg (make -j)" >>"$LOG"
     \\if ! make -j"$(nproc 2>/dev/null || echo 4)" </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== make failed ===" >&2; tail -n 160 "$LOG" >&2; exit 1
     \\fi
     \\make install </dev/null >>"$LOG" 2>&1
+    \\# `libavutil/hwcontext_vulkan.h` includes <vulkan/vulkan.h>, so ship the same
+    \\# pinned headers it was built against. Consumers then need no Vulkan SDK of their
+    \\# own, and cannot compile the context structs against a mismatched version.
+    \\cp -a "$VKINC/vulkan" "$VKINC/vk_video" "$OUT/include/"
     \\echo "ffmpeg-ramiel: installed lean static ffmpeg + dav1d to $OUT" >>"$LOG"
 ;

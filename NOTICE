@@ -27,6 +27,16 @@ FFmpeg's built-in av1 decoder is hardware-only; libdav1d provides software AV1.
 License (BSD 2-Clause): bundled with the release tarball as COPYING.dav1d;
 upstream at https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
 
+Vulkan-Headers — Apache License 2.0 / MIT
+-----------------------------------------
+The release tarball also contains the Khronos Vulkan headers (KhronosGroup/
+Vulkan-Headers, pinned to v1.3.290) under include/vulkan and include/vk_video.
+FFmpeg's Vulkan video decode support is built against them, and
+libavutil/hwcontext_vulkan.h includes <vulkan/vulkan.h>, so consumers need the
+same headers to use that API. They are dual-licensed Apache-2.0 OR MIT; the full
+texts are in the upstream repository under LICENSES/ at
+https://github.com/KhronosGroup/Vulkan-Headers
+
 Patents
 -------
 The H.264, H.265/HEVC and AAC decoders implement patent-encumbered formats.
