@@ -1,6 +1,6 @@
 .{
     .name = .ffmpeg_ramiel,
-    .version = "0.1.3",
+    .version = "0.1.4",
     .fingerprint = 0x223fbf8eb4e37d1f,
     .minimum_zig_version = "0.16.0",
 
@@ -16,12 +16,12 @@
             .lazy = true,
         },
         .prebuilt_x86_64_windows = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.3/ffmpeg-ramiel-v0.1.3-x86_64-windows.tar.gz",
-            .hash = "N-V-__8AAB8FGAGXQzNk5YD_coVdmAcePnNOql2P_C-Eqwea",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.4/ffmpeg-ramiel-v0.1.4-x86_64-windows.tar.gz",
+            .hash = "N-V-__8AALpOAQLQmqwhf3bwIzR9GFoWJwu2wRaAo3S2xwoo",
         },
         .prebuilt_x86_64_linux = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.3/ffmpeg-ramiel-v0.1.3-x86_64-linux.tar.gz",
-            .hash = "N-V-__8AAErPDQGw0r1u45f_z4e55qbLbhEXXYA6lQKKpEWj",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.4/ffmpeg-ramiel-v0.1.4-x86_64-linux.tar.gz",
+            .hash = "N-V-__8AAHFR9wFTMsoguhhy5SpYlvfj6xryBfm7oYg_W4Jd",
         },
         .vulkan_headers = .{
             .url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.3.290.tar.gz",
