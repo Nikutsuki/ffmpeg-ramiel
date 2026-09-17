@@ -136,8 +136,9 @@ const build_script =
     \\fi
     \\# configure only *checks* for Vulkan: too-old headers silently disable it and
     \\# still produce a green build. Assert the components we depend on are present.
+    \\# `CONFIG_VULKAN` lands in config.h, per-component hwaccels in config_components.h.
     \\for sym in CONFIG_VULKAN CONFIG_H264_VULKAN_HWACCEL CONFIG_HEVC_VULKAN_HWACCEL; do
-    \\  if ! grep -q "^#define $sym 1$" config.h; then
+    \\  if ! grep -q "^#define $sym 1$" config.h config_components.h; then
     \\    echo "=== $sym is not enabled: vulkan video decode is missing ===" >&2
     \\    grep -i -n vulkan ffbuild/config.log | tail -n 40 >&2 2>/dev/null
     \\    exit 1
