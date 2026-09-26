@@ -39,12 +39,18 @@ shell, `make`, and `nasm` (for x86 SIMD — kept, since decode speed matters):
   Defaults assume `C:/msys64`. Install deps:
   ```sh
   pacman -S --needed mingw-w64-ucrt-x86_64-gcc make nasm \
-    mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-ninja
+    mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-ninja \
+    mingw-w64-ucrt-x86_64-pkgconf
   ```
   ramiel builds with the GNU/UCRT ABI, so the UCRT64 `.a` link cleanly.
-  (`make`/`nasm` drive FFmpeg's autotools build; `meson`/`ninja` build libdav1d.)
-- **Linux/macOS:** a C compiler, `make`, `nasm`, `meson`, `ninja`, `pkg-config`
-  from your package manager.
+  (`make`/`nasm` drive FFmpeg's autotools build; `meson`/`ninja` build libdav1d.
+  HTTPS uses Windows **Schannel** — no OpenSSL package needed.)
+- **Linux:** a C compiler, `make`, `nasm`, `meson`, `ninja`, `pkg-config`,
+  plus `libssl-dev` (OpenSSL) for HTTPS, and `libva-dev` / `libdrm-dev` for
+  VAAPI. Example: `sudo apt install build-essential nasm meson ninja-build
+  pkg-config libssl-dev libva-dev libdrm-dev`
+- **macOS:** same core tools; HTTPS uses **Secure Transport** (no extra TLS
+  package).
 
 **Works from any shell — no MSYS2 terminal required.** `zig build` may be run
 from PowerShell, cmd, or an IDE. The build step internally (a) prepends the
@@ -79,6 +85,7 @@ Overridable build options:
 `ramiel/build.zig`:
 
 ```zig
+const ffmpeg_build = @import("ffmpeg");
 const ffmpeg = b.dependency("ffmpeg", .{});
 ramiel_mod.addSystemIncludePath(ffmpeg.namedLazyPath("include"));
 ramiel_mod.addObjectFile(ffmpeg.namedLazyPath("libavformat"));
@@ -86,6 +93,8 @@ ramiel_mod.addObjectFile(ffmpeg.namedLazyPath("libavcodec"));
 ramiel_mod.addObjectFile(ffmpeg.namedLazyPath("libdav1d"));
 ramiel_mod.addObjectFile(ffmpeg.namedLazyPath("libswresample"));
 ramiel_mod.addObjectFile(ffmpeg.namedLazyPath("libavutil"));
+// HTTPS/network: Schannel (Windows), OpenSSL (Linux), SecureTransport (macOS)
+ffmpeg_build.linkSystemDeps(ramiel_mod, target);
 ```
 
 Exposed named lazy paths: `include`, `prefix`, `libavcodec`, `libavformat`,
@@ -107,7 +116,8 @@ ABI (e.g. windows-msvc, musl) should build from source with `-Dprebuilt=false`.
   `h264/hevc_mp4toannexb` BSFs.
 - **Audio:** aac, mp3, opus, vorbis, flac, pcm.
 - **Containers:** mov/mp4, matroska/webm, mp3, ogg, wav, flac, aac.
-- **Protocols:** file.
+- **Protocols:** `file`, `http`, `https`, `tls`, `tcp`.
+- **TLS:** Schannel (Windows), OpenSSL (Linux), Secure Transport (macOS).
 
 AV1 uses **libdav1d** (built from source via meson+ninja, statically linked) —
 FFmpeg's built-in `av1` decoder is hardware-only and cannot decode in software.
@@ -116,26 +126,31 @@ Edit the `configure` flags in `build.zig` to change the matrix.
 
 ## Releasing
 
-`.github/workflows/release.yml` runs on a `v*` tag push: it builds the static
-archives on a Windows runner (MSYS2 UCRT64) and a Linux runner, then publishes
-per-target tarballs (`ffmpeg-ramiel-<tag>-x86_64-{windows,linux}.tar.gz`) to the
-GitHub release.
+`.github/workflows/release.yml` runs on a `v*` tag push:
 
-Bootstrapping prebuilt fetching (one-time per release):
+1. Builds static archives on Windows (MSYS2 UCRT64) and Linux (`-Dprebuilt=false`).
+2. Publishes `ffmpeg-ramiel-<tag>-x86_64-{windows,linux}.tar.gz` to the GitHub release.
+3. Computes Zig package hashes and commits an update to `build.zig.zon` on the
+   default branch so default `zig build` fetches that tag's prebuilts.
 
-1. Tag and push (`git tag v0.1.0 && git push --tags`); the workflow publishes the
-   tarballs.
-2. Get each tarball's Zig package hash:
-   ```sh
-   zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.0/ffmpeg-ramiel-v0.1.0-x86_64-windows.tar.gz
-   zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.0/ffmpeg-ramiel-v0.1.0-x86_64-linux.tar.gz
-   ```
-3. Paste each printed hash into the matching `prebuilt_x86_64_*` entry in
-   `build.zig.zon` (replacing the placeholder), commit.
+Tag from a commit that already has the desired configure flags:
 
-After that, `zig build` (default `-Dprebuilt=true`) fetches the right tarball
-per target with no compilation. The placeholder hashes do not affect source
-builds (`-Dprebuilt=false`), which never reference the prebuilt deps.
+```sh
+git tag v0.1.5
+git push origin v0.1.5
+```
+
+`.github/workflows/ci.yml` builds from source on push/PR so HTTPS/configure
+regressions are caught before tagging.
+
+Manual hash bootstrap (only if the auto-update job is skipped):
+
+```sh
+zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-windows.tar.gz
+zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-linux.tar.gz
+```
+
+Prebuilt deps are `lazy`, so `-Dprebuilt=false` never fetches them.
 
 ## License
 

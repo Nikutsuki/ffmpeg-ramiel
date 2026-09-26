@@ -20,11 +20,34 @@ pub fn build(b: *std.Build) void {
     } else null;
 
     if (prebuilt_name) |name| {
-        exposePrefix(b, b.dependency(name, .{}).path(""));
+        const dep = b.lazyDependency(name, .{}) orelse return;
+        exposePrefix(b, dep.path(""));
         return;
     }
 
     buildFromSource(b, target);
+}
+
+/// Link OS TLS / socket libraries required by libavformat when network+HTTPS is enabled.
+/// Call after adding the `lib*.a` object files from this package.
+pub fn linkSystemDeps(mod: *std.Build.Module, target: std.Build.ResolvedTarget) void {
+    switch (target.result.os.tag) {
+        .windows => {
+            // Schannel TLS + Winsock (used by tcp/http/https protocols).
+            mod.linkSystemLibrary("secur32", .{});
+            mod.linkSystemLibrary("crypt32", .{});
+            mod.linkSystemLibrary("ws2_32", .{});
+        },
+        .linux => {
+            mod.linkSystemLibrary("ssl", .{});
+            mod.linkSystemLibrary("crypto", .{});
+        },
+        .macos => {
+            mod.linkFramework("Security", .{});
+            mod.linkFramework("CoreFoundation", .{});
+        },
+        else => {},
+    }
 }
 
 fn exposePrefix(b: *std.Build, prefix: std.Build.LazyPath) void {
@@ -88,11 +111,24 @@ const build_script =
     \\  OUT_N="$(cygpath -m "$OUT")"
     \\  VKINC_N="$(cygpath -m "$VKINC")"
     \\  HWFLAGS="--enable-d3d11va --enable-dxva2 --enable-vulkan"
+    \\  # Native Windows TLS - no third-party SSL .a to ship or link at build time.
+    \\  TLSFLAGS="--enable-schannel"
+    \\  TLS_ASSERT="CONFIG_SCHANNEL"
+    \\elif [ "$(uname -s)" = "Darwin" ]; then
+    \\  DAVSRC_N="$DAVSRC"
+    \\  OUT_N="$OUT"
+    \\  VKINC_N="$VKINC"
+    \\  HWFLAGS="--enable-vulkan"
+    \\  TLSFLAGS="--enable-securetransport"
+    \\  TLS_ASSERT="CONFIG_SECURETRANSPORT"
     \\else
     \\  DAVSRC_N="$DAVSRC"
     \\  OUT_N="$OUT"
     \\  VKINC_N="$VKINC"
     \\  HWFLAGS="--enable-vaapi --enable-libdrm --enable-vulkan"
+    \\  # System OpenSSL via pkg-config (libssl-dev). Lightweight vs bundling a TLS stack.
+    \\  TLSFLAGS="--enable-openssl"
+    \\  TLS_ASSERT="CONFIG_OPENSSL"
     \\fi
     \\BUILD="${OUT}.build"
     \\rm -rf "$BUILD"; mkdir -p "$BUILD"
@@ -106,7 +142,8 @@ const build_script =
     \\if ! ninja -C "$DAVB_N" install </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== dav1d build failed ===" >&2; tail -n 120 "$LOG" >&2; exit 1
     \\fi
-    \\export PKG_CONFIG_PATH="$OUT/lib/pkgconfig"
+    \\# Prefer our prefix (dav1d) but keep system paths so openssl.pc resolves on Linux.
+    \\export PKG_CONFIG_PATH="$OUT/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
     \\FFB="$BUILD/ffmpeg"
     \\mkdir -p "$FFB"; cp -a "$FFSRC"/. "$FFB"/
     \\cd "$FFB"
@@ -126,8 +163,10 @@ const build_script =
     \\  --enable-parser=h264,hevc,vp9,av1,aac,opus,vorbis,flac \
     \\  --enable-demuxer=mov,matroska,mp3,ogg,wav,flac,aac \
     \\  --enable-bsf=h264_mp4toannexb,hevc_mp4toannexb \
-    \\  --enable-protocol=file \
-    \\  --disable-network --disable-iconv --disable-zlib --disable-bzlib --disable-lzma \
+    \\  --enable-network \
+    \\  --enable-protocol=file,http,https,tls,tcp \
+    \\  $TLSFLAGS \
+    \\  --disable-iconv --disable-zlib --disable-bzlib --disable-lzma \
     \\  --extra-cflags="-ffunction-sections -I$VKINC_N" \
     \\  </dev/null >>"$LOG" 2>&1; then
     \\  echo "=== ffmpeg configure failed ===" >&2; tail -n 80 "$LOG" >&2
@@ -141,6 +180,14 @@ const build_script =
     \\  if ! grep -q "^#define $sym 1$" config.h config_components.h; then
     \\    echo "=== $sym is not enabled: vulkan video decode is missing ===" >&2
     \\    grep -i -n vulkan ffbuild/config.log | tail -n 40 >&2 2>/dev/null
+    \\    exit 1
+    \\  fi
+    \\done
+    \\# HTTPS needs network + http/https/tls/tcp protocols and a TLS backend.
+    \\for sym in CONFIG_NETWORK CONFIG_HTTP_PROTOCOL CONFIG_HTTPS_PROTOCOL CONFIG_TLS_PROTOCOL CONFIG_TCP_PROTOCOL "$TLS_ASSERT"; do
+    \\  if ! grep -q "^#define $sym 1$" config.h config_components.h; then
+    \\    echo "=== $sym is not enabled: HTTPS / network support is missing ===" >&2
+    \\    grep -i -nE 'openssl|schannel|securetransport|https|tls|network' ffbuild/config.log | tail -n 60 >&2 2>/dev/null
     \\    exit 1
     \\  fi
     \\done

@@ -10,15 +10,26 @@ is NOT MIT-licensed. It is governed by the licenses below.
 FFmpeg — LGPL v2.1 or later
 --------------------------
 This package configures FFmpeg (pinned to release n7.1.1) with decoders,
-demuxers, parsers and bitstream filters only, and WITHOUT --enable-gpl, so the
-result is LGPL, not GPL. The static libraries (libavcodec, libavformat,
-libavutil, libswresample) and any binary that statically links them are subject
-to the LGPL, including the section 6 relinking obligation: a distributor of such
-a binary must enable recipients to relink it against a modified FFmpeg. The means
-to do so are provided by this repository: the exact FFmpeg version and the full
-configure flag set are in build.zig, and the object archives are the release
-tarballs. The full LGPL v2.1 text is bundled with the release tarball as
-COPYING.LGPLv2.1. FFmpeg licensing: https://www.ffmpeg.org/legal.html
+demuxers, parsers, bitstream filters, and minimal network/HTTPS support, and
+WITHOUT --enable-gpl, so the result is LGPL, not GPL. The static libraries
+(libavcodec, libavformat, libavutil, libswresample) and any binary that
+statically links them are subject to the LGPL, including the section 6
+relinking obligation: a distributor of such a binary must enable recipients to
+relink it against a modified FFmpeg. The means to do so are provided by this
+repository: the exact FFmpeg version and the full configure flag set are in
+build.zig, and the object archives are the release tarballs. The full LGPL
+v2.1 text is bundled with the release tarball as COPYING.LGPLv2.1. FFmpeg
+licensing: https://www.ffmpeg.org/legal.html
+
+TLS backends (HTTPS)
+--------------------
+HTTPS uses a platform-native or system TLS stack; none of these are GPL:
+  - Windows: Schannel (OS component; link secur32, crypt32, ws2_32)
+  - Linux: OpenSSL via pkg-config / libssl (Apache-2.0 for OpenSSL 3.x;
+    consumer links ssl and crypto)
+  - macOS: Secure Transport (OS frameworks Security + CoreFoundation)
+OpenSSL is not bundled in the release archives; Linux consumers use the
+system/OpenSSL they link against.
 
 dav1d — BSD 2-Clause
 --------------------

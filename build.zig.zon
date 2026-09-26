@@ -18,10 +18,12 @@
         .prebuilt_x86_64_windows = .{
             .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.4/ffmpeg-ramiel-v0.1.4-x86_64-windows.tar.gz",
             .hash = "N-V-__8AALpOAQLQmqwhf3bwIzR9GFoWJwu2wRaAo3S2xwoo",
+            .lazy = true,
         },
         .prebuilt_x86_64_linux = .{
             .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.4/ffmpeg-ramiel-v0.1.4-x86_64-linux.tar.gz",
             .hash = "N-V-__8AAHFR9wFTMsoguhhy5SpYlvfj6xryBfm7oYg_W4Jd",
+            .lazy = true,
         },
         .vulkan_headers = .{
             .url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.3.290.tar.gz",
