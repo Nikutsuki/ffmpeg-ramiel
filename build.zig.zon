@@ -1,18 +1,18 @@
 .{
     .name = .ffmpeg_ramiel,
-    .version = "0.1.5",
+    .version = "0.2.0",
     .fingerprint = 0x223fbf8eb4e37d1f,
     .minimum_zig_version = "0.16.0",
 
     .dependencies = .{
         .ffmpeg_src = .{
-            .url = "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n7.1.1.tar.gz",
-            .hash = "N-V-__8AAJgs8wSNfTZRN5DFn26G3VzqVU9lVQns-TM6J6wz",
+            .url = "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n9.0.2.tar.gz",
+            .hash = "N-V-__8AAC_PYgU2fBPFfRSAGEehM_B90ufg1Xcsu1nUv6dh",
             .lazy = true,
         },
         .dav1d_src = .{
-            .url = "https://github.com/videolan/dav1d/archive/refs/tags/1.5.1.tar.gz",
-            .hash = "N-V-__8AADyfswC8PUcbSINU_Y8cAc2lKgEqVi6du23wXLMS",
+            .url = "https://github.com/videolan/dav1d/archive/refs/tags/1.5.4.tar.gz",
+            .hash = "N-V-__8AAMa2uADFWkkzECjkNT3uIozVdICt7NhKQ0IdLju9",
             .lazy = true,
         },
         .prebuilt_x86_64_windows = .{
@@ -26,8 +26,8 @@
             .lazy = true,
         },
         .vulkan_headers = .{
-            .url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.3.290.tar.gz",
-            .hash = "N-V-__8AAM34oAGhETbSClWAuslf16TtTxxQw-N6kDUPpFM0",
+            .url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.321.tar.gz",
+            .hash = "N-V-__8AAI7-AQIsx0GGCNZVZDEQ-EhVjVd915WjwOOiSSA-",
             .lazy = true,
         },
     },

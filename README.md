@@ -136,8 +136,8 @@ Edit the `configure` flags in `build.zig` to change the matrix.
 Tag from a commit that already has the desired configure flags:
 
 ```sh
-git tag v0.1.5
-git push origin v0.1.5
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 `.github/workflows/ci.yml` builds from source on push/PR so HTTPS/configure
@@ -146,8 +146,8 @@ regressions are caught before tagging.
 Manual hash bootstrap (only if the auto-update job is skipped):
 
 ```sh
-zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-windows.tar.gz
-zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-linux.tar.gz
+zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-windows.tar.gz
+zig fetch https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-linux.tar.gz
 ```
 
 Prebuilt deps are `lazy`, so `-Dprebuilt=false` never fetches them.
@@ -162,7 +162,7 @@ note for H.264/H.265/AAC. Full detail in `NOTICE`. Never add `--enable-gpl`.
 
 ## Pinned versions
 
-FFmpeg **n7.1.1**, dav1d **1.5.1** (see `build.zig.zon`). To bump either:
+FFmpeg **n9.0.2**, dav1d **1.5.4**, Vulkan-Headers **v1.4.321** (see `build.zig.zon`). To bump either:
 
 ```sh
 zig fetch <archive-url-for-new-tag>

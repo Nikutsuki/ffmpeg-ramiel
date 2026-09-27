@@ -9,7 +9,7 @@ is NOT MIT-licensed. It is governed by the licenses below.
 
 FFmpeg — LGPL v2.1 or later
 --------------------------
-This package configures FFmpeg (pinned to release n7.1.1) with decoders,
+This package configures FFmpeg (pinned to release n9.0.2) with decoders,
 demuxers, parsers, bitstream filters, and minimal network/HTTPS support, and
 WITHOUT --enable-gpl, so the result is LGPL, not GPL. The static libraries
 (libavcodec, libavformat, libavutil, libswresample) and any binary that
@@ -33,7 +33,7 @@ system/OpenSSL they link against.
 
 dav1d — BSD 2-Clause
 --------------------
-AV1 decoding uses libdav1d (VideoLAN), pinned to 1.5.1, statically linked.
+AV1 decoding uses libdav1d (VideoLAN), pinned to 1.5.4, statically linked.
 FFmpeg's built-in av1 decoder is hardware-only; libdav1d provides software AV1.
 License (BSD 2-Clause): bundled with the release tarball as COPYING.dav1d;
 upstream at https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
@@ -41,7 +41,7 @@ upstream at https://code.videolan.org/videolan/dav1d/-/blob/master/COPYING
 Vulkan-Headers — Apache License 2.0 / MIT
 -----------------------------------------
 The release tarball also contains the Khronos Vulkan headers (KhronosGroup/
-Vulkan-Headers, pinned to v1.3.290) under include/vulkan and include/vk_video.
+Vulkan-Headers, pinned to v1.4.321) under include/vulkan and include/vk_video.
 FFmpeg's Vulkan video decode support is built against them, and
 libavutil/hwcontext_vulkan.h includes <vulkan/vulkan.h>, so consumers need the
 same headers to use that API. They are dual-licensed Apache-2.0 OR MIT; the full

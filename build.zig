@@ -154,7 +154,7 @@ const build_script =
     \\  --disable-shared --enable-static --enable-pic \
     \\  --disable-programs --disable-doc --disable-debug --disable-autodetect \
     \\  --disable-everything \
-    \\  --disable-avdevice --disable-avfilter --disable-swscale --disable-postproc \
+    \\  --disable-avdevice --disable-avfilter --disable-swscale \
     \\  --enable-avcodec --enable-avformat --enable-avutil --enable-swresample \
     \\  $HWFLAGS \
     \\  --enable-hwaccels \
