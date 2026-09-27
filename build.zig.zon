@@ -16,13 +16,13 @@
             .lazy = true,
         },
         .prebuilt_x86_64_windows = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-windows.tar.gz",
-            .hash = "N-V-__8AALwwAwIc6eoZKS7BQF3MqOPl1VRJgTmK0royCDfe",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-windows.tar.gz",
+            .hash = "N-V-__8AAFtsZAKxgczgJo4DnwJxi3pVso_DoMgDXNlyBXR2",
             .lazy = true,
         },
         .prebuilt_x86_64_linux = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.1.5/ffmpeg-ramiel-v0.1.5-x86_64-linux.tar.gz",
-            .hash = "N-V-__8AAIFH-QEiAgQaCU8GlCgyWyZ6tqlqDwbgijPEDGI-",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-linux.tar.gz",
+            .hash = "N-V-__8AAE_eWQLNWdfPFl6eLzOcbWiSSsiAz0f_vVaAmzQ0",
             .lazy = true,
         },
         .vulkan_headers = .{
