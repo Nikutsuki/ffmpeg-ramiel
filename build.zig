@@ -148,7 +148,7 @@ const build_script =
     \\mkdir -p "$FFB"; cp -a "$FFSRC"/. "$FFB"/
     \\cd "$FFB"
     \\# Do not auto-inject mutable/alias flags or global usage on any video profile
-    \\sed 's/hwctx->tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT &&//' libavutil/hwcontext_vulkan.c > libavutil/hwcontext_vulkan.c.tmp && mv libavutil/hwcontext_vulkan.c.tmp libavutil/hwcontext_vulkan.c
+    \\sed 's/int drm_mod_with_video = (hwctx->tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT &&/int drm_mod_with_video = (NULL != /' libavutil/hwcontext_vulkan.c > libavutil/hwcontext_vulkan.c.tmp && mv libavutil/hwcontext_vulkan.c.tmp libavutil/hwcontext_vulkan.c
     \\echo "ffmpeg-ramiel: configuring ffmpeg" >>"$LOG"
     \\if ! ./configure \
     \\  --prefix="$OUT" \
