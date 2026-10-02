@@ -1,6 +1,6 @@
 .{
     .name = .ffmpeg_ramiel,
-    .version = "0.2.0",
+    .version = "0.2.1",
     .fingerprint = 0x223fbf8eb4e37d1f,
     .minimum_zig_version = "0.16.0",
 
@@ -16,13 +16,13 @@
             .lazy = true,
         },
         .prebuilt_x86_64_windows = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-windows.tar.gz",
-            .hash = "N-V-__8AAFtsZAKxgczgJo4DnwJxi3pVso_DoMgDXNlyBXR2",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.1/ffmpeg-ramiel-v0.2.1-x86_64-windows.tar.gz",
+            .hash = "N-V-__8AADtsZAIZOhT19hXtYBKU9V3On-ktc61m629qIj4j",
             .lazy = true,
         },
         .prebuilt_x86_64_linux = .{
-            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.0/ffmpeg-ramiel-v0.2.0-x86_64-linux.tar.gz",
-            .hash = "N-V-__8AAE_eWQLNWdfPFl6eLzOcbWiSSsiAz0f_vVaAmzQ0",
+            .url = "https://github.com/Nikutsuki/ffmpeg-ramiel/releases/download/v0.2.1/ffmpeg-ramiel-v0.2.1-x86_64-linux.tar.gz",
+            .hash = "N-V-__8AAE_eWQIt7R0hfEP_nmyggWQrk6ckLhQIK-Qagwap",
             .lazy = true,
         },
         .vulkan_headers = .{
